@@ -169960,12 +169960,17 @@ var User =
 /** @class */
 function () {
   function User() {
+    this.color = 'red';
     this.name = faker_1.default.name.firstName(-1);
     this.location = {
       lat: parseFloat(faker_1.default.address.longitude()),
       lng: parseFloat(faker_1.default.address.latitude())
     };
   }
+
+  User.prototype.markerContent = function () {
+    return "\n\t\t<div>\n\t\t\t<h2>\n\t\t\t\tUser Name: " + this.name + " \n\t\t\t</h2>\n\t\t</div>\n\t\t";
+  };
 
   return User;
 }();
@@ -169990,6 +169995,7 @@ var Company =
 /** @class */
 function () {
   function Company() {
+    this.color = 'blue';
     this.companyName = faker_1.default.company.companyName();
     this.catchPhrase = faker_1.default.company.catchPhrase();
     this.location = {
@@ -169997,6 +170003,10 @@ function () {
       lng: parseFloat(faker_1.default.address.longitude())
     };
   }
+
+  Company.prototype.markerContent = function () {
+    return "Company Name: " + this.companyName + " ";
+  };
 
   return Company;
 }();
@@ -170023,12 +170033,20 @@ function () {
   }
 
   CustomMap.prototype.addMarker = function (target) {
-    new google.maps.Marker({
+    var _this = this;
+
+    var marker = new google.maps.Marker({
       map: this.googleMap,
       position: {
         lat: target.location.lat,
         lng: target.location.lng
       }
+    });
+    marker.addListener('click', function () {
+      var infoWindow = new google.maps.InfoWindow({
+        content: target.markerContent()
+      });
+      infoWindow.open(_this.googleMap, marker);
     });
   };
 
